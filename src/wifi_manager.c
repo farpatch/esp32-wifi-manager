@@ -40,7 +40,6 @@ Contains the freeRTOS task and all necessary support
 #include <freertos/task.h>
 #include <freertos/event_groups.h>
 #include <freertos/timers.h>
-#include <http_app.h>
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_netif.h"
@@ -962,9 +961,6 @@ void wifi_manager( void * pvParameters ){
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
 	ESP_ERROR_CHECK(esp_wifi_start());
 
-	/* start http server */
-	http_app_start(false);
-
 	/* wifi scanner config */
 	wifi_scan_config_t scan_config = {
 		.ssid = 0,
@@ -1213,10 +1209,6 @@ void wifi_manager( void * pvParameters ){
 
 				ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
 
-				/* restart HTTP daemon */
-				http_app_stop();
-				http_app_start(true);
-
 				/* start DNS */
 				dns_server_start();
 
@@ -1241,10 +1233,6 @@ void wifi_manager( void * pvParameters ){
 
 					/* stop DNS */
 					dns_server_stop();
-
-					/* restart HTTP daemon */
-					http_app_stop();
-					http_app_start(false);
 
 					/* callback */
 					if(cb_ptr_arr[msg.code]) (*cb_ptr_arr[msg.code])(NULL);
