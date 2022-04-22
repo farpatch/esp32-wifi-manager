@@ -110,7 +110,7 @@ struct wifi_settings_t wifi_settings = {
 	.sta_static_ip = 0,
 };
 
-const char wifi_manager_nvs_namespace[] = "espwifimgr";
+static const char wifi_manager_nvs_namespace[] = "espwifimgr";
 
 static EventGroupHandle_t wifi_manager_event_group;
 
@@ -964,7 +964,7 @@ void wifi_manager( void * pvParameters ){
 	ESP_ERROR_CHECK(esp_wifi_start());
 
 	/* wifi scanner config */
-	wifi_scan_config_t scan_config = {
+	const wifi_scan_config_t scan_config = {
 		.ssid = 0,
 		.bssid = 0,
 		.channel = 0,
