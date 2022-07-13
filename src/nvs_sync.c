@@ -33,47 +33,45 @@ SOFTWARE.
 #include <esp_err.h>
 #include "nvs_sync.h"
 
-
 static SemaphoreHandle_t nvs_sync_mutex = NULL;
 
-esp_err_t nvs_sync_create(){
-    if(nvs_sync_mutex == NULL){
+esp_err_t nvs_sync_create()
+{
+	if (nvs_sync_mutex == NULL) {
+		nvs_sync_mutex = xSemaphoreCreateMutex();
 
-        nvs_sync_mutex = xSemaphoreCreateMutex();
-
-		if(nvs_sync_mutex){
+		if (nvs_sync_mutex) {
 			return ESP_OK;
-		}
-		else{
+		} else {
 			return ESP_FAIL;
 		}
-    }
-	else{
+	} else {
 		return ESP_OK;
 	}
 }
 
-void nvs_sync_free(){
-    if(nvs_sync_mutex != NULL){
-        vSemaphoreDelete( nvs_sync_mutex );
-        nvs_sync_mutex = NULL;
-    }
+void nvs_sync_free()
+{
+	if (nvs_sync_mutex != NULL) {
+		vSemaphoreDelete(nvs_sync_mutex);
+		nvs_sync_mutex = NULL;
+	}
 }
 
-bool nvs_sync_lock(TickType_t xTicksToWait){
-	if(nvs_sync_mutex){
-		if( xSemaphoreTake( nvs_sync_mutex, xTicksToWait ) == pdTRUE ) {
+bool nvs_sync_lock(TickType_t xTicksToWait)
+{
+	if (nvs_sync_mutex) {
+		if (xSemaphoreTake(nvs_sync_mutex, xTicksToWait) == pdTRUE) {
 			return true;
-		}
-		else{
+		} else {
 			return false;
 		}
-	}
-	else{
+	} else {
 		return false;
 	}
 }
 
-void nvs_sync_unlock(){
-	xSemaphoreGive( nvs_sync_mutex );
+void nvs_sync_unlock()
+{
+	xSemaphoreGive(nvs_sync_mutex);
 }

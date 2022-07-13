@@ -31,7 +31,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include <stdbool.h>
 #include "json.h"
 
-
 bool json_print_string(const unsigned char *input, unsigned char *output_buffer)
 {
 	const unsigned char *input_pointer = NULL;
@@ -41,34 +40,27 @@ bool json_print_string(const unsigned char *input, unsigned char *output_buffer)
 	/* numbers of additional characters needed for escaping */
 	size_t escape_characters = 0;
 
-	if (output_buffer == NULL)
-	{
+	if (output_buffer == NULL) {
 		return false;
 	}
 
 	/* empty string */
-	if (input == NULL)
-	{
+	if (input == NULL) {
 		//output = ensure(output_buffer, sizeof("\"\""), hooks);
-		if (output == NULL)
-		{
+		if (output == NULL) {
 			return false;
 		}
-		strcpy((char*)output, "\"\"");
+		strcpy((char *)output, "\"\"");
 
 		return true;
 	}
 
 	/* set "flag" to 1 if something needs to be escaped */
-	for (input_pointer = input; *input_pointer; input_pointer++)
-	{
-		if (strchr("\"\\\b\f\n\r\t", *input_pointer))
-		{
+	for (input_pointer = input; *input_pointer; input_pointer++) {
+		if (strchr("\"\\\b\f\n\r\t", *input_pointer)) {
 			/* one character escape sequence */
 			escape_characters++;
-		}
-		else if (*input_pointer < 32)
-		{
+		} else if (*input_pointer < 32) {
 			/* UTF-16 escape sequence uXXXX */
 			escape_characters += 5;
 		}
@@ -80,8 +72,7 @@ bool json_print_string(const unsigned char *input, unsigned char *output_buffer)
 	output = output_buffer;
 
 	/* no characters have to be escaped */
-	if (escape_characters == 0)
-	{
+	if (escape_characters == 0) {
 		output[0] = '\"';
 		memcpy(output + 1, input, output_length);
 		output[output_length + 1] = '\"';
@@ -93,19 +84,14 @@ bool json_print_string(const unsigned char *input, unsigned char *output_buffer)
 	output[0] = '\"';
 	output_pointer = output + 1;
 	/* copy the string */
-	for (input_pointer = input; *input_pointer != '\0'; (void)input_pointer++, output_pointer++)
-	{
-		if ((*input_pointer > 31) && (*input_pointer != '\"') && (*input_pointer != '\\'))
-		{
+	for (input_pointer = input; *input_pointer != '\0'; (void)input_pointer++, output_pointer++) {
+		if ((*input_pointer > 31) && (*input_pointer != '\"') && (*input_pointer != '\\')) {
 			/* normal character, copy */
 			*output_pointer = *input_pointer;
-		}
-		else
-		{
+		} else {
 			/* character needs to be escaped */
 			*output_pointer++ = '\\';
-			switch (*input_pointer)
-			{
+			switch (*input_pointer) {
 			case '\\':
 				*output_pointer = '\\';
 				break;
@@ -129,7 +115,7 @@ bool json_print_string(const unsigned char *input, unsigned char *output_buffer)
 				break;
 			default:
 				/* escape and print as unicode codepoint */
-				sprintf((char*)output_pointer, "u%04x", *input_pointer);
+				sprintf((char *)output_pointer, "u%04x", *input_pointer);
 				output_pointer += 4;
 				break;
 			}
@@ -140,4 +126,3 @@ bool json_print_string(const unsigned char *input, unsigned char *output_buffer)
 
 	return true;
 }
-
