@@ -873,6 +873,13 @@ BaseType_t wifi_manager_send_message(message_code_t code, void *param){
 	return xQueueSend( wifi_manager_queue, &msg, portMAX_DELAY);
 }
 
+BaseType_t wifi_manager_send_message_from_isr(message_code_t code, void *param, void *hasAwoken){
+	queue_message msg;
+	msg.code = code;
+	msg.param = param;
+	return xQueueSendFromISR( wifi_manager_queue, &msg, hasAwoken);
+}
+
 
 void wifi_manager_set_callback(message_code_t message_code, void (*func_ptr)(void*) ){
 
@@ -1243,6 +1250,36 @@ void wifi_manager( void * pvParameters ){
 					/* callback */
 					if(cb_ptr_arr[msg.code]) (*cb_ptr_arr[msg.code])(NULL);
 				}
+
+				break;
+
+			case WM_ORDER_FORGET_CONFIG:
+				ESP_LOGI(TAG, "MESSAGE: ORDER_FORGET_CONFIG");
+				if (nvs_sync_lock( portMAX_DELAY )) {
+					nvs_handle handle;
+					esp_err_t esp_err;
+					
+					esp_err = nvs_open(wifi_manager_nvs_namespace, NVS_READWRITE, &handle);
+					if (esp_err != ESP_OK){
+						ESP_LOGE(TAG, "unable to open nvs: %x", esp_err);
+						nvs_sync_unlock();
+						break;
+					}
+					esp_err = nvs_erase_all(handle);
+					if (esp_err != ESP_OK){
+						ESP_LOGE(TAG, "unable to erase config nvs: %x", esp_err);
+						nvs_sync_unlock();
+						break;
+					}
+					nvs_close(handle);
+					nvs_sync_unlock();
+				}
+
+				/* prevent reconnecting to the AP */
+				xEventGroupSetBits(wifi_manager_event_group, WIFI_MANAGER_REQUEST_DISCONNECT_BIT);
+
+				/* order wifi discconect */
+				ESP_ERROR_CHECK(esp_wifi_disconnect());
 
 				break;
 

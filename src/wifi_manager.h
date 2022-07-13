@@ -217,7 +217,8 @@ typedef enum message_code_t {
 	WM_EVENT_SCAN_DONE = 11,
 	WM_EVENT_STA_GOT_IP = 12,
 	WM_ORDER_STOP_AP = 13,
-	WM_MESSAGE_CODE_COUNT = 14 /* important for the callback array */
+	WM_ORDER_FORGET_CONFIG = 14,
+	WM_MESSAGE_CODE_COUNT = 15 /* important for the callback array */
 
 }message_code_t;
 
@@ -409,6 +410,7 @@ void wifi_manager_set_callback(message_code_t message_code, void (*func_ptr)(voi
 
 BaseType_t wifi_manager_send_message(message_code_t code, void *param);
 BaseType_t wifi_manager_send_message_to_front(message_code_t code, void *param);
+BaseType_t wifi_manager_send_message_from_isr(message_code_t code, void *param, void *hasAwoken);
 
 #ifdef __cplusplus
 }
