@@ -40,28 +40,24 @@ SOFTWARE.
 /* @brief tag used for ESP serial console messages */
 static const char TAG[] = "main";
 
-
-static esp_err_t my_get_handler(httpd_req_t *req){
-
+static esp_err_t my_get_handler(httpd_req_t *req)
+{
 	/* our custom page sits at /helloworld in this example */
-	if(strcmp(req->uri, "/helloworld") == 0){
-
+	if (strcmp(req->uri, "/helloworld") == 0) {
 		ESP_LOGI(TAG, "Serving page /helloworld");
 
-		const char* response = "<html><body><h1>Hello World!</h1></body></html>";
+		const char *response = "<html><body><h1>Hello World!</h1></body></html>";
 
 		httpd_resp_set_status(req, "200 OK");
 		httpd_resp_set_type(req, "text/html");
 		httpd_resp_send(req, response, strlen(response));
-	}
-	else{
+	} else {
 		/* send a 404 otherwise */
 		httpd_resp_send_404(req);
 	}
 
 	return ESP_OK;
 }
-
 
 void app_main()
 {
@@ -72,5 +68,4 @@ void app_main()
 	 * Now navigate to /helloworld to see the custom page
 	 * */
 	http_app_set_handler_hook(HTTP_GET, &my_get_handler);
-
 }

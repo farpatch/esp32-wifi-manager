@@ -46,18 +46,18 @@ static const char TAG[] = "main";
  */
 void monitoring_task(void *pvParameter)
 {
-	for(;;){
-		ESP_LOGI(TAG, "free heap: %d",esp_get_free_heap_size());
-		vTaskDelay( pdMS_TO_TICKS(10000) );
+	for (;;) {
+		ESP_LOGI(TAG, "free heap: %d", esp_get_free_heap_size());
+		vTaskDelay(pdMS_TO_TICKS(10000));
 	}
 }
-
 
 /**
  * @brief this is an exemple of a callback that you can setup in your own app to get notified of wifi manager event.
  */
-void cb_connection_ok(void *pvParameter){
-	ip_event_got_ip_t* param = (ip_event_got_ip_t*)pvParameter;
+void cb_connection_ok(void *pvParameter)
+{
+	ip_event_got_ip_t *param = (ip_event_got_ip_t *)pvParameter;
 
 	/* transform IP to human readable string */
 	char str_ip[16];
