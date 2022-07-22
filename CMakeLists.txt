@@ -1,6 +1,6 @@
 if(IDF_VERSION_MAJOR GREATER_EQUAL 4)
     idf_component_register(SRC_DIRS src
-        REQUIRES log nvs_flash wpa_supplicant lwip
+        REQUIRES log nvs_flash wpa_supplicant lwip esp_wifi
         INCLUDE_DIRS src)
 else()
     set(COMPONENT_SRCDIRS src)
