@@ -62,7 +62,7 @@ config DEFAULT_AP_GATEWAY
 
 config DEFAULT_AP_NETMASK
     string "Access Point Netmask"
-    default "255.255.255.0"
+    default "255.0.0.0"
     help
 	This is used for the redirection to the captive portal. It is recommended to leave unchanged.
 
